@@ -75,6 +75,7 @@ def test_session_committer_exception(mocker):
 
 def test_connect_dynamodb(mocker):
     """Should set DMTABLE"""
+    mocker.patch.object(hooks, 'DMTABLE')
     mocker.patch.object(hooks.dynamodb, 'get_table')
     hooks.dynamodb.get_table.return_value = 'dynamodb_table'
     event = {
@@ -89,8 +90,9 @@ def test_connect_dynamodb(mocker):
     hooks.dynamodb.get_table.assert_called_with(event['stageVariables'])
 
 
-def test_set_session():
+def test_set_session(mocker):
     """Should set SESSION"""
+    mocker.patch.object(hooks, 'SESSION')
     event = {
         'requestContext': {
             'authorizer': {

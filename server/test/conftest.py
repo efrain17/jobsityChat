@@ -16,7 +16,7 @@ def pytest_configure(config):
         'requestContext': {
             'authorizer': {
                 'user': 1,
-                'email': 'testdb@testing.com'
+                'email': 'test@testing.com'
             }
         }
     }
