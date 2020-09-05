@@ -1,5 +1,5 @@
 """This module test dynamodb conection"""
-# pylint: disable=E1101, C0411, W0613, C0302, C0103
+# pylint: disable=E1101
 from libraries import dynamodb
 
 
@@ -67,15 +67,17 @@ def test_get_table(mocker):
     dynamodb.get_resource.return_value = MockTable
     table = dynamodb.get_table(params)
     # assert
-    assert table == 'JobsityChatTest'
+    assert table.table_name == 'JobsityChatTest'
     MockTable.Table.assert_called_with('JobsityChatTest')
     dynamodb.get_resource.assert_called_with('localhost', 'http://localhost:8000')
 
 
 class MockTable:
-    """docstring for MockTable"""
+    """Mock for MockTable"""
 
-    @staticmethod
-    def Table(table_name):
-        """docstring for MockTable"""
-        return table_name
+    class Table:
+        """Mock for table"""
+
+        def __init__(self, table_name):
+            """Mocks for init"""
+            self.table_name = table_name

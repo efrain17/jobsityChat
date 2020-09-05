@@ -5,6 +5,7 @@ setup(
     version='0.1',
     py_modules=['jobsityChat'],
     install_requires=[
+        'simplejson',
         'boto3',
         'peewee',
         'peewee_validates',
