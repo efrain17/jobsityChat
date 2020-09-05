@@ -2,15 +2,16 @@
 from libraries import hooks
 
 
-DMTABLE = 'JobsityChatTest'
+DMTABLE = 'jobsityChatTest'
 
 
-def pytest_configure(unused_config):
+def pytest_configure(config):
     """"Initial configuration"""
     event = {
         'stageVariables': {
             'enviroment': 'localhost',
-            'table': DMTABLE
+            'table': DMTABLE,
+            'dynamodb_dns': 'http://localhost:8000'
         },
         'requestContext': {
             'authorizer': {

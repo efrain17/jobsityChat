@@ -22,7 +22,7 @@ def session_committer(func):
 
 
 def connect_dynamodb(event):
-    """Cliente instance for dynamodb table"""
+    """Client instance for dynamodb table"""
     global DMTABLE
     DMTABLE = dynamodb.get_table(event['stageVariables'])
 
