@@ -1,0 +1,14 @@
+**/__pycache__/
+**/.eggs
+**/sv.egg-info/
+**/venv/
+python_modules/
+build
+htmlcov/
+.vscode/
+.coverage
+__init__.py
+package-lock.json
+template.json
+.DS_Store
+node_modules/
