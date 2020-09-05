@@ -1,6 +1,6 @@
 **/__pycache__/
 **/.eggs
-**/sv.egg-info/
+**/*.egg-info/
 **/venv/
 python_modules/
 build
