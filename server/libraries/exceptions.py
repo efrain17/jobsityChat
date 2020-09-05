@@ -5,6 +5,7 @@ class ValidationError(Exception):
     """Custom exception 422"""
 
     def __init__(self, message, code=422, data=None):
+        super().__init__(message)
         self.message = message
         self.code = code
         self.data = data
