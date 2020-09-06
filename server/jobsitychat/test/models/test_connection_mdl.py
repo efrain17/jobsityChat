@@ -46,6 +46,7 @@ def test_get_all(mocker):
         'connectionId': '12345',
         'userEmail': 'test@testing.com'
     }
+    partition = 'connection'
     response = connection.get_all()
     # asserts
     connection.hooks.DMTABLE.query.assert_called_with(
@@ -53,7 +54,7 @@ def test_get_all(mocker):
         ProjectionExpression='PK, SK, TP, connectionId, userEmail',
         KeyConditionExpression='PK = :partition',
         ExpressionAttributeValues={
-            ':partition': 'connection'
+            ':partition': partition
         }
     )
     assert response[0] == expected

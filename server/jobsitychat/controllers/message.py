@@ -37,13 +37,14 @@ def post_message(event):
     """Controller message"""
     message = json.loads(event['body'])['message']
     if message[0:7] == '/stock=':
+        stage = event['requestContext']['stage']
         client = boto3.client('lambda')
         payload = {
             'requestContext': event['requestContext'],
             'body': event['body']
         }
-        response = client.invoke(
-            FunctionName='jobsityChat-dev-postMessageStock',
+        client.invoke(
+            FunctionName=f'jobsityChat-{stage}-postMessageStock',
             InvocationType='Event',
             Payload=json.dumps(payload),
         )

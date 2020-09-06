@@ -3,14 +3,14 @@
 import mock
 
 
-def mock_session_committer(func):
+def mock_session_committer_stock(func):
     """Mock sessionn committer"""
     def wrapper(*args, **kwargs):
         """run wrapper"""
         return func(*args, **kwargs)
     return wrapper
 
-with mock.patch('jobsitychat.libraries.hooks.session_committer', mock_session_committer):
+with mock.patch('jobsitychat.libraries.hooks.session_committer', mock_session_committer_stock):
     from jobsitychat.routes import stock
 
 

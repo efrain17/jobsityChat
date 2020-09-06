@@ -1,14 +1,21 @@
 """This module test message controller"""
 # pylint: disable=E1101
+import json
 from jobsitychat.controllers import message
 
 
 class MockClient():
     """Mock for Client"""
 
+    @staticmethod
     def post_to_connection(**params):
         """Mock function"""
-        return True
+        return params
+
+    @staticmethod
+    def invoke(**params):
+        """Mock invoke"""
+        return params
 
 
 def test_insert_message(mocker):
@@ -19,7 +26,7 @@ def test_insert_message(mocker):
         'timestamp': 1607774522.645,
         'datatime': '2020-09-05 17:30:30'
     }
-    new_message = 'hi! this is a message'
+    new_message = 'hi!! this is a message'
     message.insert_message(new_message)
     # asserts
     message.message_mdl.insert.assert_called_with(
@@ -28,7 +35,7 @@ def test_insert_message(mocker):
             'userEmail': 'test@testing.com',
             'chatRoom': 'chatRoom1',
             'datatime': '2020-09-05 17:30:30',
-            'message': 'hi! this is a message'
+            'message': 'hi!! this is a message'
         }
     )
 
@@ -78,14 +85,30 @@ def test_post_message(mocker):
 
 
 def test_post_message_stock(mocker):
-    """Should post message"""
+    """Should post message stock"""
     mocker.patch.object(message, 'insert_message')
     mocker.patch.object(message, 'send_to_everyone')
+    mocker.patch.object(message.boto3, 'client')
+    mocker.spy(MockClient, 'invoke')
+    message.boto3.client.return_value = MockClient
     event = {
-        'requestContext': 'requestContext',
+        'requestContext': {
+            'stage': 'dev'
+        },
+        'body': '{"message": "/stock=appl.us"}'
+    }
+    payload = {
+        'requestContext': {
+            'stage': 'dev'
+        },
         'body': '{"message": "/stock=appl.us"}'
     }
     message.post_message(event)
     # asserts
     message.insert_message.assert_not_called()
     message.send_to_everyone.assert_not_called()
+    MockClient.invoke.assert_called_with(
+        FunctionName='jobsityChat-dev-postMessageStock',
+        InvocationType='Event',
+        Payload=json.dumps(payload)
+    )
