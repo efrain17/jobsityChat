@@ -1,4 +1,5 @@
 """This module manage message controller"""
+import json
 import boto3
 from libraries import utilities
 from libraries import hooks
@@ -34,6 +35,6 @@ def send_to_everyone(event, message):
 
 def post_message(event):
     """Controller message"""
-    message = event['body']
+    message = json.loads(event['body'])['message']
     insert_message(message)
     send_to_everyone(event, message)

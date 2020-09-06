@@ -1,4 +1,5 @@
 """Configuration for testing"""
+# pylint: disable=W0613
 from libraries import hooks
 
 

@@ -24,5 +24,7 @@ def get_resource(enviroment, dynamodb_dns):
 
 def get_table(params):
     """Get table boto3"""
-    resource = get_resource(params['enviroment'], params['dynamodb_dns'])
+    dynamodb_dns = params.get('dynamodb_dns', None)
+    enviroment = params.get('enviroment', 'dev')
+    resource = get_resource(enviroment, dynamodb_dns)
     return resource.Table(params['table'])

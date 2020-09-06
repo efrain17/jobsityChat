@@ -7,11 +7,11 @@ from controllers import connection as connection_ctr
 def insert_connection(event, unused_context):
     """Insert new connection"""
     connection_ctr.insert_connection(event)
-    return 'success'
+    return {}
 
 
 @hooks.session_committer
 def delete_connection(event, unused_context):
     """Insert new connection"""
     connection_ctr.delete_connection(event)
-    return 'success'
+    return {}

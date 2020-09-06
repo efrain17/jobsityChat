@@ -28,7 +28,10 @@ def connect_dynamodb():
     DMTABLE = dynamodb.get_table(os.environ)
 
 
-def set_session(event):
+def set_session(unused_event):
     """Set variable session"""
     global SESSION
-    SESSION = event['requestContext']['authorizer']
+    SESSION = {
+        'user': '1',
+        'email': 'test@testing.com'
+    }

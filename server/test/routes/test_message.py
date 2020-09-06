@@ -19,4 +19,4 @@ def test_post_message(mocker):
     mocker.patch.object(message.message_ctr, 'post_message')
     response = message.post_message('event', 'context')
     message.message_ctr.post_message.assert_called_with('event')
-    assert response == 'success'
+    assert response == {}

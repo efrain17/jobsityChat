@@ -69,7 +69,7 @@ def test_post_message(mocker):
     mocker.patch.object(message, 'send_to_everyone')
     event = {
         'requestContext': 'requestContext',
-        'body': 'message'
+        'body': '{"message": "message"}'
     }
     message.post_message(event)
     # asserts

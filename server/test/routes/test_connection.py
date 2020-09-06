@@ -19,7 +19,7 @@ def test_insert_connection(mocker):
     mocker.patch.object(connection.connection_ctr, 'insert_connection')
     response = connection.insert_connection('event', 'context')
     connection.connection_ctr.insert_connection.assert_called_with('event')
-    assert response == 'success'
+    assert response == {}
 
 
 def test_delete_connection(mocker):
@@ -27,4 +27,4 @@ def test_delete_connection(mocker):
     mocker.patch.object(connection.connection_ctr, 'delete_connection')
     response = connection.delete_connection('event', 'context')
     connection.connection_ctr.delete_connection.assert_called_with('event')
-    assert response == 'success'
+    assert response == {}

@@ -5,9 +5,8 @@ from models import connection as connection_mdl
 
 def insert_connection(event):
     """Insert connection id"""
-    connection_id = event['requestContext']['connectionId']
     new_connection = {
-        'connectionId': event['requestContext']['connectionId'], 
+        'connectionId': event['requestContext']['connectionId'],
         'chatRoom': 'chatRoom1',
         'userEmail': hooks.SESSION['email']
     }

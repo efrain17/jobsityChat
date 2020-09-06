@@ -13,3 +13,4 @@ template.json
 .DS_Store
 node_modules/
 /dynamodb/shared-local-instance.db
+lib/

@@ -7,4 +7,4 @@ from controllers import message as message_ctr
 def post_message(event, unused_context):
     """Post new message"""
     message_ctr.post_message(event)
-    return 'success'
+    return {}

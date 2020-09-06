@@ -1,0 +1,86 @@
+service: jobsityChat
+frameworkVersion: "1.74.1"
+
+custom:
+  lambdaRunTime: python3.6
+  dynamodbTableName: jobsityChat
+  stage: ${opt:stage, self:provider.stage}
+
+provider:
+  name: aws
+  iamManagedPolicies:
+    - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+  runtime: ${self:custom.lambdaRunTime}
+  versionFunctions: false
+  region: us-west-2
+  timeout: 60
+
+plugins:
+  - serverless-pseudo-parameters
+package:
+  individually: true
+  exclude:
+    - "lib/**"
+    - "node_modules/**"
+    - "test/**"
+    - "*.egg-info/**"
+    - "*.egg-info/**"
+    - "venv/**"
+
+layers:
+  pythonPackageLayer:
+    path: lib
+    name: Python-Package-layer
+    description: Python Package layer
+    compatibleRuntimes:
+      - ${self:custom.lambdaRunTime}
+
+functions:
+  connectHandler:
+    handler: routes/connection.insert_connection
+    events:
+      - websocket: $connect
+    layers:
+      - { Ref: PythonPackageLayerLambdaLayer }
+    environment:
+      table: ${self:custom.dynamodbTableName}
+
+  disconnectHandler:
+    handler: routes/connection.delete_connection
+    events:
+      - websocket: $disconnect
+    layers:
+      - { Ref: PythonPackageLayerLambdaLayer }
+    environment:
+      table: ${self:custom.dynamodbTableName}
+
+  onMessageHandler:
+    handler: routes/message.post_message
+    events:
+      - websocket:
+          route: onMessage
+    layers:
+      - { Ref: PythonPackageLayerLambdaLayer }
+    environment:
+      table: ${self:custom.dynamodbTableName}
+
+resources:
+  Resources:
+    jobsityChatTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
+      Properties:
+        TableName: ${self:custom.dynamodbTableName}
+        AttributeDefinitions:
+          - AttributeName: PK
+            AttributeType: S
+          - AttributeName: SK
+            AttributeType: S
+        KeySchema:
+          - AttributeName: PK
+            KeyType: HASH
+          - AttributeName: SK
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
+        SSESpecification:
+          SSEEnabled: true
