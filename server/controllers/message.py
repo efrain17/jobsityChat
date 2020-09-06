@@ -36,5 +36,17 @@ def send_to_everyone(event, message):
 def post_message(event):
     """Controller message"""
     message = json.loads(event['body'])['message']
-    insert_message(message)
-    send_to_everyone(event, message)
+    if message[0:7] == '/stock=':
+        client = boto3.client('lambda')
+        payload = {
+            'requestContext': event['requestContext'],
+            'body': event['body']
+        }
+        response = client.invoke(
+            FunctionName='jobsityChat-dev-postMessageStock',
+            InvocationType='Event',
+            Payload=json.dumps(payload),
+        )
+    else:
+        insert_message(message)
+        send_to_everyone(event, message)

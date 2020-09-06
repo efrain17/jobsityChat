@@ -1,6 +1,0 @@
-setup.py
-jobsityChat.egg-info/PKG-INFO
-jobsityChat.egg-info/SOURCES.txt
-jobsityChat.egg-info/dependency_links.txt
-jobsityChat.egg-info/requires.txt
-jobsityChat.egg-info/top_level.txt

@@ -9,7 +9,7 @@ def test_get_stock(mocker):
     expected_url = 'https://stooq.com/q/l/?s=aapl.us&f=sd2t2ohlcv&h&e=csv'
     response = stock.get('aapl.us')
     # asserts
-    assert isinstance(response, float)
+    assert isinstance(float(response), float)
     stock.requests.get.assert_called_with(expected_url)
 
 

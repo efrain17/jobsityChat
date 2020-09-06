@@ -75,3 +75,17 @@ def test_post_message(mocker):
     # asserts
     message.insert_message.assert_called_with('message')
     message.send_to_everyone.assert_called_with(event, 'message')
+
+
+def test_post_message_stock(mocker):
+    """Should post message"""
+    mocker.patch.object(message, 'insert_message')
+    mocker.patch.object(message, 'send_to_everyone')
+    event = {
+        'requestContext': 'requestContext',
+        'body': '{"message": "/stock=appl.us"}'
+    }
+    message.post_message(event)
+    # asserts
+    message.insert_message.assert_not_called()
+    message.send_to_everyone.assert_not_called()

@@ -2,7 +2,7 @@ service: jobsityChat
 frameworkVersion: "1.74.1"
 
 custom:
-  lambdaRunTime: python3.6
+  lambdaRunTime: python3.8
   dynamodbTableName: jobsityChat
   stage: ${opt:stage, self:provider.stage}
 
@@ -10,6 +10,7 @@ provider:
   name: aws
   iamManagedPolicies:
     - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+    - arn:aws:iam::aws:policy/AWSLambdaFullAccess
   runtime: ${self:custom.lambdaRunTime}
   versionFunctions: false
   region: us-west-2
@@ -59,6 +60,13 @@ functions:
     events:
       - websocket:
           route: onMessage
+    layers:
+      - { Ref: PythonPackageLayerLambdaLayer }
+    environment:
+      table: ${self:custom.dynamodbTableName}
+
+  postMessageStock:
+    handler: routes/stock.post_message
     layers:
       - { Ref: PythonPackageLayerLambdaLayer }
     environment:
