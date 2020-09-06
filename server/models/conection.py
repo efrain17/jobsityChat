@@ -15,6 +15,16 @@ def insert(conection):
     )
 
 
+def delete(conection_id):
+    """Delete conection by id"""
+    hooks.DMTABLE.delete_item(
+        Key={
+            'PK': 'conection',
+            'SK': conection_id
+        }
+    )
+
+
 def get_all():
     """Get all conections"""
     response = hooks.DMTABLE.query(

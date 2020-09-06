@@ -22,6 +22,20 @@ def test_insert_conection(mocker):
     )
 
 
+def test_delete_conection(mocker):
+    """Should delete conection"""
+    mocker.spy(conection.hooks.DMTABLE, 'delete_item')
+    conection_id = '123456'
+    conection.delete(conection_id)
+    # asserts
+    conection.hooks.DMTABLE.delete_item.assert_called_with(
+        Key={
+            'PK': 'conection',
+            'SK': '123456'
+        }
+    )
+
+
 def test_get_all(mocker):
     """Shoult get all conections"""
     mocker.spy(conection.hooks.DMTABLE, 'query')
