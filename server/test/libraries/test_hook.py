@@ -41,7 +41,7 @@ def test_session_committer(mocker):
     response = wrapper(event, 'context')
     # assert
     MockCallback.callback.assert_called_with(event, 'context')
-    hooks.connect_dynamodb.assert_called_with(event)
+    hooks.connect_dynamodb.assert_called_with()
     hooks.set_session.assert_called_with(event)
     assert isinstance(response, type('function'))
 
@@ -68,7 +68,7 @@ def test_session_committer_exception(mocker):
     response = wrapper(event, 'context')
     # assert
     MockCallback.callback_except.assert_called_with(event, 'context')
-    hooks.connect_dynamodb.assert_called_with(event)
+    hooks.connect_dynamodb.assert_called_with()
     hooks.set_session.assert_called_with(event)
     assert response == 'response error'
 
@@ -77,17 +77,21 @@ def test_connect_dynamodb(mocker):
     """Should set DMTABLE"""
     mocker.patch.object(hooks, 'DMTABLE')
     mocker.patch.object(hooks.dynamodb, 'get_table')
+    mocker.patch.object(hooks.os, 'environ')
     hooks.dynamodb.get_table.return_value = 'dynamodb_table'
-    event = {
-        'stageVariables': {
+    hooks.os.environ = {
+        'enviroment': 'localhost',
+        'table': 'dynamodb_table'
+    }
+    hooks.connect_dynamodb()
+    # asserts
+    assert hooks.DMTABLE == 'dynamodb_table'
+    hooks.dynamodb.get_table.assert_called_with(
+        {
             'enviroment': 'localhost',
             'table': 'dynamodb_table'
         }
-    }
-    hooks.connect_dynamodb(event)
-    # asserts
-    assert hooks.DMTABLE == 'dynamodb_table'
-    hooks.dynamodb.get_table.assert_called_with(event['stageVariables'])
+    )
 
 
 def test_set_session(mocker):
