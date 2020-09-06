@@ -1,9 +1,9 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='jobsityChat',
+    name='jobsitychat',
     version='0.1',
-    py_modules=['jobsityChat'],
+    py_modules=['jobsitychat'],
     install_requires=[
         'simplejson',
         'boto3',

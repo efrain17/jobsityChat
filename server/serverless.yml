@@ -38,7 +38,7 @@ layers:
 
 functions:
   connectHandler:
-    handler: routes/connection.insert_connection
+    handler: jobsitychat/routes/connection.insert_connection
     events:
       - websocket: $connect
     layers:
@@ -47,7 +47,7 @@ functions:
       table: ${self:custom.dynamodbTableName}
 
   disconnectHandler:
-    handler: routes/connection.delete_connection
+    handler: jobsitychat/routes/connection.delete_connection
     events:
       - websocket: $disconnect
     layers:
@@ -56,7 +56,7 @@ functions:
       table: ${self:custom.dynamodbTableName}
 
   onMessageHandler:
-    handler: routes/message.post_message
+    handler: jobsitychat/routes/message.post_message
     events:
       - websocket:
           route: onMessage
@@ -66,7 +66,7 @@ functions:
       table: ${self:custom.dynamodbTableName}
 
   postMessageStock:
-    handler: routes/stock.post_message
+    handler: jobsitychat/routes/stock.post_message
     layers:
       - { Ref: PythonPackageLayerLambdaLayer }
     environment:
