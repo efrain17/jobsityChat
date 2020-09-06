@@ -23,3 +23,41 @@ def test_insert_message(mocker):
             'message': 'hi! this is a message'
         }
     )
+
+
+def test_send_to_everyone(mocker):
+    """Should send a message to everyone"""
+    mocker.patch.object(message.connection_mdl, 'get_all')
+    mocker.patch.object(message.boto3, 'client')
+    mocker.spy(MockClient, 'post_to_connection')
+    message.boto3.client.return_value = MockClient
+    message.connection_mdl.get_all.return_value = [
+        {
+            'connectionId': 123
+        }
+    ]
+    event = {
+        'requestContext': {
+            'domainName': 'domain',
+            'stage': 'dev'
+        }
+    }
+    message.send_to_everyone(event, 'message')
+    # asserts
+    message.connection_mdl.get_all.assert_called_with()
+    message.boto3.client.assert_called_with(
+        'apigatewaymanagementapi',
+        endpoint_url='https://domain/dev'
+    )
+    MockClient.post_to_connection.assert_called_with(
+        Data='message',
+        ConnectionId=123
+    )
+
+
+class MockClient():
+    """Mock for Client"""
+
+    def post_to_connection(**params):
+        """Mock function"""
+        return True
