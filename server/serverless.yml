@@ -40,7 +40,12 @@ functions:
   connectHandler:
     handler: jobsitychat/routes/connection.insert_connection
     events:
-      - websocket: $connect
+      - websocket:
+          route: $connect
+          authorizer:
+            name: auth
+            identitySource:
+              - 'route.request.querystring.Authorizer'
     layers:
       - { Ref: PythonPackageLayerLambdaLayer }
     environment:
@@ -72,6 +77,13 @@ functions:
     environment:
       table: ${self:custom.dynamodbTableName}
 
+  auth:
+    handler: jobsitychat/routes/auth.authenticate
+    layers:
+      - { Ref: PythonPackageLayerLambdaLayer }
+    environment:
+      table: ${self:custom.dynamodbTableName}
+
 resources:
   Resources:
     jobsityChatTable:
@@ -92,3 +104,19 @@ resources:
         BillingMode: PAY_PER_REQUEST
         SSESpecification:
           SSEEnabled: true
+
+    CognitoUserPool:
+      Type: AWS::Cognito::UserPool
+      Properties:
+        UserPoolName: ${self:custom.stage}-user-pool-jobsity-chat
+        UsernameAttributes:
+          - email
+
+    CognitoUserPoolClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        ClientName: ${self:custom.stage}-user-pool-client-jobsity-chat
+        UserPoolId:
+          Ref: CognitoUserPool
+        GenerateSecret: false
+
