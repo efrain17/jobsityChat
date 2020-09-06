@@ -1,4 +1,4 @@
-"""This module test dynamodb conection"""
+"""This module test dynamodb connection"""
 # pylint: disable=E1101
 from libraries import dynamodb
 
