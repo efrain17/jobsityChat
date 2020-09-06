@@ -10,6 +10,7 @@ class MockClient():
         """Mock function"""
         return True
 
+
 def test_insert_message(mocker):
     """Sould insert a message"""
     mocker.patch.object(message.message_mdl, 'insert')
@@ -60,6 +61,7 @@ def test_send_to_everyone(mocker):
         Data='message',
         ConnectionId=123
     )
+
 
 def test_post_message(mocker):
     """Should post message"""
