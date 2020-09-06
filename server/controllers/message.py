@@ -7,9 +7,8 @@ from models import message as message_mdl
 def insert(message):
     """Insert a new message"""
     now = utilities.now()
-    negative_timestamp = str(now['timestamp'] * -1)
     new_message = {
-        'timestamp': negative_timestamp,
+        'timestamp': str(now['timestamp']),
         'userEmail': hooks.SESSION['email'],
         'chatRoom': 'chatRoom1',
         'datatime': now['datatime'],

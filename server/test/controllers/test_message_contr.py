@@ -16,7 +16,7 @@ def test_insert_message(mocker):
     # asserts
     message.message_mdl.insert.assert_called_with(
         {
-            'timestamp': '-1607774522.645',
+            'timestamp': '1607774522.645',
             'userEmail': 'test@testing.com',
             'chatRoom': 'chatRoom1',
             'datatime': '2020-09-05 17:30:30',

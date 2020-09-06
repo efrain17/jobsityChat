@@ -6,9 +6,10 @@ def insert(message):
     """Insert a new message"""
     hooks.DMTABLE.put_item(
         Item={
-            'PK': message['timestamp'],
-            'SK': message['userEmail'],
+            'PK': 'message',
+            'SK': message['timestamp'],
             'TP': message['chatRoom'],
+            'userEmail': message['userEmail'],
             'datatime': message['datatime'],
             'message': message['message']
         }
