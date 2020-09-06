@@ -20,3 +20,26 @@ def test_insert_conection(mocker):
             'userEmail': 'test@testing.com',
         }
     )
+
+
+def test_get_all(mocker):
+    """Shoult get all conections"""
+    mocker.spy(conection.hooks.DMTABLE, 'query')
+    expected = {
+        'PK': 'conection',
+        'SK': '12345',
+        'TP': 'chatRoom1',
+        'connectionId': '12345',
+        'userEmail': 'test@testing.com'
+    }
+    response = conection.get_all()
+    # asserts
+    conection.hooks.DMTABLE.query.assert_called_with(
+        Select='SPECIFIC_ATTRIBUTES',
+        ProjectionExpression='PK, SK, TP, connectionId, userEmail',
+        KeyConditionExpression='PK = :partition',
+        ExpressionAttributeValues={
+            ':partition': 'conection'
+        }
+    )
+    assert response[0] == expected

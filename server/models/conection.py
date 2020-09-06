@@ -13,3 +13,16 @@ def insert(conection):
             'userEmail': conection['userEmail']
         }
     )
+
+
+def get_all():
+    """Get all conections"""
+    response = hooks.DMTABLE.query(
+        Select='SPECIFIC_ATTRIBUTES',
+        ProjectionExpression='PK, SK, TP, connectionId, userEmail',
+        KeyConditionExpression='PK = :partition',
+        ExpressionAttributeValues={
+            ':partition': 'conection'
+        }
+    )
+    return response['Items']
