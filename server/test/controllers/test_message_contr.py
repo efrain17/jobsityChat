@@ -3,6 +3,13 @@
 from controllers import message
 
 
+class MockClient():
+    """Mock for Client"""
+
+    def post_to_connection(**params):
+        """Mock function"""
+        return True
+
 def test_insert_message(mocker):
     """Sould insert a message"""
     mocker.patch.object(message.message_mdl, 'insert')
@@ -12,7 +19,7 @@ def test_insert_message(mocker):
         'datatime': '2020-09-05 17:30:30'
     }
     new_message = 'hi! this is a message'
-    message.insert(new_message)
+    message.insert_message(new_message)
     # asserts
     message.message_mdl.insert.assert_called_with(
         {
@@ -54,10 +61,15 @@ def test_send_to_everyone(mocker):
         ConnectionId=123
     )
 
-
-class MockClient():
-    """Mock for Client"""
-
-    def post_to_connection(**params):
-        """Mock function"""
-        return True
+def test_post_message(mocker):
+    """Should post message"""
+    mocker.patch.object(message, 'insert_message')
+    mocker.patch.object(message, 'send_to_everyone')
+    event = {
+        'requestContext': 'requestContext',
+        'body': 'message'
+    }
+    message.post_message(event)
+    # asserts
+    message.insert_message.assert_called_with('message')
+    message.send_to_everyone.assert_called_with(event, 'message')

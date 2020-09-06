@@ -6,7 +6,7 @@ from models import message as message_mdl
 from models import connection as connection_mdl
 
 
-def insert(message):
+def insert_message(message):
     """Insert a new message"""
     now = utilities.now()
     new_message = {
@@ -31,3 +31,9 @@ def send_to_everyone(event, message):
             Data=message,
             ConnectionId=_connection['connectionId']
         )
+
+def post_message(event):
+    """Controller message"""
+    message = event['body']
+    insert_message(message)
+    send_to_everyone(event, message)
