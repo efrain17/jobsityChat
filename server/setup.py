@@ -7,6 +7,7 @@ setup(
     install_requires=[
         'simplejson',
         'boto3',
+        'pandas',
         'peewee',
         'peewee_validates',
         'pymysql',

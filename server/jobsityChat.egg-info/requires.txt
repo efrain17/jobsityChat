@@ -2,6 +2,7 @@ baseconvert
 boto3
 flask
 mock
+pandas
 peewee
 peewee_validates
 pycryptodome
