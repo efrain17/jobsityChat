@@ -1,8 +1,10 @@
 {
-  "name": "awswebsocketchat",
+  "name": "jobsityChat",
   "description": "",
   "version": "0.1.0",
-  "dependencies": {},
+  "dependencies": {
+    "serverless-s3-sync": "^1.14.4"
+  },
   "devDependencies": {
     "serverless-pseudo-parameters": "^2.5.0"
   }

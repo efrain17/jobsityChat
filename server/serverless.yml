@@ -5,19 +5,25 @@ custom:
   lambdaRunTime: python3.8
   dynamodbTableName: jobsityChat
   stage: ${opt:stage, self:provider.stage}
+  domain: jobsitychat-#{AWS::AccountId}-${self:custom.stage}
+  s3Sync:
+    - bucketName: jobsitychat-951344569535-dev
+      localDir: ../client
 
 provider:
   name: aws
   iamManagedPolicies:
     - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
     - arn:aws:iam::aws:policy/AWSLambdaFullAccess
+    - arn:aws:iam::aws:policy/AmazonCognitoPowerUser 
   runtime: ${self:custom.lambdaRunTime}
   versionFunctions: false
   region: us-west-2
-  timeout: 60
+  timeout: 300
 
 plugins:
   - serverless-pseudo-parameters
+  - serverless-s3-sync
 package:
   individually: true
   exclude:
@@ -108,9 +114,19 @@ resources:
     CognitoUserPool:
       Type: AWS::Cognito::UserPool
       Properties:
+        MfaConfiguration: OFF
         UserPoolName: ${self:custom.stage}-user-pool-jobsity-chat
         UsernameAttributes:
           - email
+        AutoVerifiedAttributes:
+          - email
+        Policies:
+          PasswordPolicy:
+            MinimumLength: 6
+            RequireLowercase: False
+            RequireNumbers: False
+            RequireSymbols: False
+            RequireUppercase: False
 
     CognitoUserPoolClient:
       Type: AWS::Cognito::UserPoolClient
@@ -119,4 +135,29 @@ resources:
         UserPoolId:
           Ref: CognitoUserPool
         GenerateSecret: false
+        CallbackURLs: 
+          - https://${self:custom.domain}.s3-us-west-2.amazonaws.com/index.html
+        LogoutURLs: 
+          - 'https://www.amazon.com'
+        AllowedOAuthFlows:
+          - implicit
+        AllowedOAuthScopes:
+          - openid
+          - email
+          - aws.cognito.signin.user.admin
+          - phone
+          - profile
 
+    UserPoolDomain:
+      Type: AWS::Cognito::UserPoolDomain
+      Properties:
+        UserPoolId: !Ref CognitoUserPool
+        Domain: jobsitychat-#{AWS::AccountId}-${self:custom.stage}
+
+    StaticSite:
+      Type: AWS::S3::Bucket
+      Properties:
+        AccessControl: PublicRead
+        BucketName: ${self:custom.domain}
+        WebsiteConfiguration:
+          IndexDocument: index.html

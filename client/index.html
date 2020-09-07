@@ -27,7 +27,7 @@
         </div>
         <div class="form-group">
           <small id="webSocketConnectionHelp" class="form-text text-muted">DNS Web Socket</small>
-          <input class="form-control" id="webSocketConnection" type="text" size="80" value="wss://cpr43xrswa.execute-api.us-west-2.amazonaws.com/dev">
+          <input class="form-control" id="webSocketConnection" type="text" size="80" value="wss://hqzzsehbij.execute-api.us-west-2.amazonaws.com/dev">
         </div>
         <div class="form-group">
           <input class="form-control" id="messageInput" type="text" size="80" placeholder="Enter message to send" autocomplete="off">
@@ -70,8 +70,15 @@
     }
 
     function connectToWebSocket() {
-      let searchParams = new URLSearchParams(window.location.search);
-      let accessToken = searchParams.get("access_token")
+      // resolve hash variables
+      let hash = window.location.hash.substr(1);
+      let result = hash.split('&').reduce((result, item) => {
+        let parts = item.split('=');
+        result[parts[0]] = parts[1];
+        return result;
+      }, {});
+      let accessToken = result["access_token"];
+      // connection socket
       webSocketConnection = document.getElementById("webSocketConnection").value;
       webSocketConnection += '?Authorizer=' + accessToken;
       socket = new WebSocket(webSocketConnection);
