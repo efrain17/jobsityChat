@@ -37,7 +37,7 @@ def test_delete_connection(mocker):
 
 
 def test_get_connection(mocker):
-    """Should delete connection"""
+    """Should get connection"""
     mocker.spy(connection.hooks.DMTABLE, 'get_item')
     connection_id = '12345'
     expected = {
@@ -63,6 +63,15 @@ def test_get_connection(mocker):
         ]
     )
     assert response == expected
+
+
+def test_get_connection_not_found(mocker):
+    """Should get empty dictionary"""
+    mocker.spy(connection.hooks.DMTABLE, 'get_item')
+    connection_id = 'XYZ'
+    response = connection.get(connection_id)
+    # asserts
+    assert response == {}
 
 
 def test_get_all(mocker):
