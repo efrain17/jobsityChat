@@ -9,7 +9,7 @@ def insert(message):
             'PK': 'message',
             'SK': message['timestamp'],
             'TP': message['chatRoom'],
-            'userEmail': message['userEmail'],
+            'userName': message['userName'],
             'datatime': message['datatime'],
             'message': message['message']
         }

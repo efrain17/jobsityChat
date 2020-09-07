@@ -27,12 +27,12 @@ def test_insert_message(mocker):
         'datatime': '2020-09-05 17:30:30'
     }
     new_message = 'hi!! this is a message'
-    message.insert_message(new_message)
+    message.insert_message(new_message, 'userName')
     # asserts
     message.message_mdl.insert.assert_called_with(
         {
             'timestamp': '1607774522.645',
-            'userEmail': 'test@testing.com',
+            'userName': 'userName',
             'chatRoom': 'chatRoom1',
             'datatime': '2020-09-05 17:30:30',
             'message': 'hi!! this is a message'
@@ -74,14 +74,21 @@ def test_post_message(mocker):
     """Should post message"""
     mocker.patch.object(message, 'insert_message')
     mocker.patch.object(message, 'send_to_everyone')
+    mocker.patch.object(message.connection_mdl, 'get')
+    message.connection_mdl.get.return_value = {
+        'userName': 'userName'
+    }
     event = {
-        'requestContext': 'requestContext',
+        'requestContext': {
+            'connectionId': 'connectionId'
+        },
         'body': '{"message": "message"}'
     }
     message.post_message(event)
     # asserts
-    message.insert_message.assert_called_with('message')
+    message.insert_message.assert_called_with('message', 'userName')
     message.send_to_everyone.assert_called_with(event, 'message')
+    message.connection_mdl.get.assert_called_with('connectionId')
 
 
 def test_post_message_stock(mocker):

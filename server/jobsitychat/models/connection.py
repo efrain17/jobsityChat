@@ -36,7 +36,6 @@ def get(connection_id):
         return {}
 
 
-
 def delete(connection_id):
     """Delete connection by id"""
     hooks.DMTABLE.delete_item(

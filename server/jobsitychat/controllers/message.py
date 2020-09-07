@@ -7,12 +7,12 @@ from jobsitychat.models import message as message_mdl
 from jobsitychat.models import connection as connection_mdl
 
 
-def insert_message(message):
+def insert_message(message, user_name):
     """Insert a new message"""
     now = utilities.now()
     new_message = {
         'timestamp': str(now['timestamp']),
-        'userEmail': hooks.SESSION['email'],
+        'userName': user_name,
         'chatRoom': 'chatRoom1',
         'datatime': now['datatime'],
         'message': message
@@ -49,5 +49,6 @@ def post_message(event):
             Payload=json.dumps(payload),
         )
     else:
-        insert_message(message)
+        connection = connection_mdl.get(event['requestContext']['connectionId'])
+        insert_message(message, connection['userName'])
         send_to_everyone(event, message)
