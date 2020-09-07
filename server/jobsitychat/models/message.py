@@ -14,3 +14,18 @@ def insert(message):
             'message': message['message']
         }
     )
+
+
+def get_all_last():
+    """Get last 50 messages"""
+    response = hooks.DMTABLE.query(
+        Select='SPECIFIC_ATTRIBUTES',
+        Limit=50,
+        ScanIndexForward=False,
+        ProjectionExpression='PK, SK, TP, userName, datatime, message',
+        KeyConditionExpression='PK = :partition',
+        ExpressionAttributeValues={
+            ':partition': 'message'
+        }
+    )
+    return response['Items']
