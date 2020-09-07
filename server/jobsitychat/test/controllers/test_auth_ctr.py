@@ -26,6 +26,7 @@ def test_authenticate_allow(mocker):
     auth.authenticate(event)
     auth.get_policy.assert_called_with(event, 'Allow')
     MockClient.get_user.assert_called_with(AccessToken=1234)
+    auth.boto3.client.assert_called_with('cognito-idp')
 
 
 def test_authenticate_deny(mocker):

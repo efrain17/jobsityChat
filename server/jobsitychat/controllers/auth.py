@@ -1,5 +1,4 @@
 """This module manage auth controller"""
-import json
 import boto3
 
 
