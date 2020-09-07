@@ -7,7 +7,7 @@ def test_insert_connection(mocker):
     mocker.spy(connection.hooks.DMTABLE, 'put_item')
     new_connection = {
         'connectionId': '12345',
-        'userEmail': 'test@testing.com',
+        'userName': 'testName',
         'chatRoom': 'chatRoom1'
     }
     connection.insert(new_connection)
@@ -17,7 +17,7 @@ def test_insert_connection(mocker):
             'SK': '12345',
             'TP': 'chatRoom1',
             'connectionId': '12345',
-            'userEmail': 'test@testing.com',
+            'userName': 'testName',
         }
     )
 
@@ -44,14 +44,14 @@ def test_get_all(mocker):
         'SK': '12345',
         'TP': 'chatRoom1',
         'connectionId': '12345',
-        'userEmail': 'test@testing.com'
+        'userName': 'testName'
     }
     partition = 'connection'
     response = connection.get_all()
     # asserts
     connection.hooks.DMTABLE.query.assert_called_with(
         Select='SPECIFIC_ATTRIBUTES',
-        ProjectionExpression='PK, SK, TP, connectionId, userEmail',
+        ProjectionExpression='PK, SK, TP, connectionId, userName',
         KeyConditionExpression='PK = :partition',
         ExpressionAttributeValues={
             ':partition': partition

@@ -10,7 +10,7 @@ def insert(connection):
             'SK': connection['connectionId'],
             'TP': connection['chatRoom'],
             'connectionId': connection['connectionId'],
-            'userEmail': connection['userEmail']
+            'userName': connection['userName']
         }
     )
 
@@ -29,7 +29,7 @@ def get_all():
     """Get all connections"""
     response = hooks.DMTABLE.query(
         Select='SPECIFIC_ATTRIBUTES',
-        ProjectionExpression='PK, SK, TP, connectionId, userEmail',
+        ProjectionExpression='PK, SK, TP, connectionId, userName',
         KeyConditionExpression='PK = :partition',
         ExpressionAttributeValues={
             ':partition': 'connection'
