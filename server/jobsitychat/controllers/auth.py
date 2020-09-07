@@ -9,8 +9,7 @@ def authenticate(event):
     response = client.get_user(AccessToken=access_token)
     if response:
         return get_policy(event, 'Allow')
-    else:
-        return get_policy(event, 'Deny')
+    return get_policy(event, 'Deny')
 
 
 def get_policy(event, effect):

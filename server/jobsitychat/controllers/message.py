@@ -2,7 +2,6 @@
 import json
 import boto3
 from jobsitychat.libraries import utilities
-from jobsitychat.libraries import hooks
 from jobsitychat.models import message as message_mdl
 from jobsitychat.models import connection as connection_mdl
 
@@ -42,7 +41,7 @@ def post_message(event):
     """Controller message"""
     body = json.loads(event['body'])
     message = body.get('message', '')
-    accion = body.get('action', None)
+    task = body.get('task', None)
     if message[0:7] == '/stock=':
         stage = event['requestContext']['stage']
         client = boto3.client('lambda')
@@ -55,7 +54,7 @@ def post_message(event):
             InvocationType='Event',
             Payload=json.dumps(payload),
         )
-    elif accion == 'sendLastMessages':
+    elif task == 'sendLastMessages':
         connection_id = event['requestContext']['connectionId']
         send_last_messages(event, connection_id)
     else:
@@ -67,11 +66,12 @@ def post_message(event):
 def send_last_messages(event, connection_id):
     """Send last 50 messages"""
     messages = message_mdl.get_all_last()
+    messages = sorted(messages, key=lambda k: float(k['SK']))
     domain = event['requestContext']['domainName']
     stage = event['requestContext']['stage']
     endpoint_url = f'https://{domain}/{stage}'
     api_gateway = boto3.client(
-        'apigatewaymanagementapi', 
+        'apigatewaymanagementapi',
         endpoint_url=endpoint_url
     )
     for message in messages:

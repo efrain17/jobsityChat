@@ -1,6 +1,7 @@
 """This module test message controller"""
 # pylint: disable=E1101
 import json
+from mock import call
 from jobsitychat.controllers import message
 
 
@@ -134,7 +135,7 @@ def test_post_message_send_last_messages(mocker):
             'stage': 'dev',
             'connectionId': 'connectionId'
         },
-        'body': '{"action": "sendLastMessages"}'
+        'body': '{"task": "sendLastMessages"}'
     }
     message.post_message(event)
     # asserts
@@ -153,6 +154,12 @@ def test_send_last_messages(mocker):
     message.boto3.client.return_value = MockClient
     message.message_mdl.get_all_last.return_value = [
         {
+            'SK': '10',
+            'message': 'message10',
+            'userName': 'testName10'
+        },
+        {
+            'SK': '2',
             'message': 'message',
             'userName': 'testName'
         }
@@ -163,10 +170,17 @@ def test_send_last_messages(mocker):
             'stage': 'dev'
         }
     }
+    additions_calls = [
+        call(
+            Data='{"message": "message", "userName": "testName"}',
+            ConnectionId='connectionId'
+        ),
+        call(
+            Data='{"message": "message10", "userName": "testName10"}',
+            ConnectionId='connectionId'
+        ),
+    ]
     message.send_last_messages(event, 'connectionId')
     # asserts
     message.message_mdl.get_all_last.assert_called_with()
-    MockClient.post_to_connection.assert_called_with(
-        Data='{"message": "message", "userName": "testName"}',
-        ConnectionId='connectionId'
-    )
+    MockClient.post_to_connection.assert_has_calls(additions_calls)

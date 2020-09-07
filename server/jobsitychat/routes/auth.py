@@ -1,5 +1,4 @@
 """This module manage message route"""
-from jobsitychat.libraries import hooks
 from jobsitychat.controllers import auth as auth_ctr
 
 

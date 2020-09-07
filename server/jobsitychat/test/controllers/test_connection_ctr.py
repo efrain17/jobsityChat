@@ -1,6 +1,5 @@
 """This module test connection controller"""
-# pylint: disable=E1101
-import boto3
+# pylint: disable=E1101, W0613
 from jobsitychat.controllers import connection
 
 
@@ -53,4 +52,3 @@ def test_delete_connection(mocker):
     connection.delete_connection(event)
     # asserts
     connection.connection_mdl.delete.assert_called_with(123)
-

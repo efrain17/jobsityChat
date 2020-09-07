@@ -1,5 +1,4 @@
 """This module manage connection controller"""
-import json
 import boto3
 from jobsitychat.models import connection as connection_mdl
 
