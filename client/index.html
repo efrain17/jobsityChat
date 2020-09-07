@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>AWS Websockets</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+  </head>
+  <body>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+
+    <nav class="navbar navbar-dark bg-dark">
+      <a class="navbar-brand" href="#">JobsityChat</a>
+    </nav>
+    <div id="page" class="container">
+      <div class="card mt-3">
+        <div class="card-header">
+          <span>Socket Messages Status: </span>
+          <span class="text-muted" id="socketState"></span>
+        </div>
+        <div class="card-body">
+        <div id="messageContainer" style="min-height: 15rem; max-height: 15rem;overflow-y: auto; overflow-x: hidden;">
+          <p class="card-text" id="messages"></p>
+        </div>
+        <div class="form-group">
+          <small id="webSocketConnectionHelp" class="form-text text-muted">DNS Web Socket</small>
+          <input class="form-control" id="webSocketConnection" type="text" size="80" value="wss://cpr43xrswa.execute-api.us-west-2.amazonaws.com/dev">
+        </div>
+        <div class="form-group">
+          <input class="form-control" id="messageInput" type="text" size="80" placeholder="Enter message to send" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <button class="btn btn-primary" id="connectToWebSocketButton" onclick="connectToWebSocket()">Connect</button>
+          <button class="btn btn-outline-secondary" id="disconnectBtn" onclick="disconnect()">Disconnect</button>
+          <button class="btn btn-outline-secondary" id="sendMessageBtn" onclick="sendMessage()">Send</button>
+        </div>
+        </div>
+      </div>
+    </div>    
+  </body>
+  <script>
+    document.getElementById("disconnectBtn").disabled = true;
+    document.getElementById("sendMessageBtn").disabled = true;
+    document.getElementById("messageInput").disabled = true;
+    document.getElementById("socketState").innerHTML = 'Connection Closed';
+
+    let socket = null;
+
+    document.getElementById("messageInput").onkeypress = (event) => {
+      if (event.keyCode == 13 || event.which == 13){
+        sendMessage()
+      }
+    };
+
+    function scrollBottom() {
+      let messageContainer = document.getElementById('messageContainer')
+      messageContainer.scrollTop = messageContainer.scrollHeight - messageContainer.offsetHeight;
+    }
+    
+    function sendMessage() {
+      let payload = {
+        "action": "onMessage", 
+        "message": document.getElementById("messageInput").value 
+      };
+      document.getElementById("messageInput").value = null;
+      socket.send(JSON.stringify(payload));
+    }
+
+    function connectToWebSocket() {
+      let searchParams = new URLSearchParams(window.location.search);
+      let accessToken = searchParams.get("access_token")
+      webSocketConnection = document.getElementById("webSocketConnection").value;
+      webSocketConnection += '?Authorizer=' + accessToken;
+      socket = new WebSocket(webSocketConnection);
+
+      socket.onopen = (event) => {
+        document.getElementById("socketState").innerHTML = 'Connection Open';
+        document.getElementById("connectToWebSocketButton").disabled = true;
+        document.getElementById("disconnectBtn").disabled = false;
+        document.getElementById("sendMessageBtn").disabled = false;
+        document.getElementById("messageInput").disabled = false;
+        socket.send(JSON.stringify({"action": "onMessage", "task": "sendLastMessages"}));
+        document.getElementById("messages").innerHTML = null;
+      };
+
+      socket.onmessage = (event) => {
+        let data = JSON.parse(event.data);
+        if(data.userName) {
+          let newMessage = data.userName + ': ' + data.message;
+          document.getElementById("messages").innerHTML += newMessage + '<br/>';
+          scrollBottom();
+        }
+      };
+
+      socket.onerror = (event) => {
+        console.error("WebSocket error observed:", event);
+        document.getElementById("socketState").innerHTML = 'Connection Error';
+      };
+
+      socket.onclose = (event) => {
+        document.getElementById("socketState").innerHTML = 'Connection Closed';
+        document.getElementById("connectToWebSocketButton").disabled = false;
+        document.getElementById("disconnectBtn").disabled = true;
+        document.getElementById("sendMessageBtn").disabled = true;
+      };
+    }
+
+    function disconnect() {
+      socket.close();
+    }
+  </script>
+</html>
