@@ -40,7 +40,9 @@ def send_to_everyone(event, message, user_name):
 
 def post_message(event):
     """Controller message"""
-    message = json.loads(event['body'])['message']
+    body = json.loads(event['body'])
+    message = body.get('message', '')
+    accion = body.get('action', None)
     if message[0:7] == '/stock=':
         stage = event['requestContext']['stage']
         client = boto3.client('lambda')
@@ -53,7 +55,31 @@ def post_message(event):
             InvocationType='Event',
             Payload=json.dumps(payload),
         )
+    elif accion == 'sendLastMessages':
+        connection_id = event['requestContext']['connectionId']
+        send_last_messages(event, connection_id)
     else:
         connection = connection_mdl.get(event['requestContext']['connectionId'])
         insert_message(message, connection['userName'])
         send_to_everyone(event, message, connection['userName'])
+
+
+def send_last_messages(event, connection_id):
+    """Send last 50 messages"""
+    messages = message_mdl.get_all_last()
+    domain = event['requestContext']['domainName']
+    stage = event['requestContext']['stage']
+    endpoint_url = f'https://{domain}/{stage}'
+    api_gateway = boto3.client(
+        'apigatewaymanagementapi', 
+        endpoint_url=endpoint_url
+    )
+    for message in messages:
+        message_data = {
+            'message': message['message'],
+            'userName': message['userName']
+        }
+        api_gateway.post_to_connection(
+            Data=json.dumps(message_data),
+            ConnectionId=connection_id
+        )

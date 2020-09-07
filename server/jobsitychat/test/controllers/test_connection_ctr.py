@@ -14,17 +14,11 @@ class MockClient():
             'Username': 'userTest'
         }
 
-    @staticmethod
-    def post_to_connection(**params):
-        """Mock function"""
-        return params
-
 
 def test_insert_connection(mocker):
     """Sould insert a connection"""
     mocker.patch.object(connection.connection_mdl, 'insert')
     mocker.patch.object(connection.boto3, 'client')
-    mocker.patch.object(connection, 'send_last_mesages')
     mocker.spy(MockClient, 'get_user')
     connection.boto3.client.return_value = MockClient
     event = {
@@ -46,7 +40,6 @@ def test_insert_connection(mocker):
     )
     connection.boto3.client.assert_called_with('cognito-idp')
     MockClient.get_user.assert_called_with(AccessToken=444)
-    connection.send_last_mesages.assert_called_with(event, 123)
 
 
 def test_delete_connection(mocker):
@@ -61,29 +54,3 @@ def test_delete_connection(mocker):
     # asserts
     connection.connection_mdl.delete.assert_called_with(123)
 
-
-def test_send_last_mesages(mocker):
-    """should send last 50 messages"""
-    mocker.patch.object(connection.message_mdl, 'get_all_last')
-    mocker.patch.object(connection.boto3, 'client')
-    mocker.spy(MockClient, 'post_to_connection')
-    connection.boto3.client.return_value = MockClient
-    connection.message_mdl.get_all_last.return_value = [
-        {
-            'message': 'message',
-            'userName': 'testName'
-        }
-    ]
-    event = {
-        'requestContext': {
-            'domainName': 'domain',
-            'stage': 'dev'
-        }
-    }
-    connection.send_last_mesages(event, 'connectionId')
-    # asserts
-    connection.message_mdl.get_all_last.assert_called_with()
-    MockClient.post_to_connection.assert_called_with(
-        Data='{"message": "message", "userName": "testName"}',
-        ConnectionId='connectionId'
-    )
