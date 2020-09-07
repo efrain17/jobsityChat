@@ -57,7 +57,7 @@ def test_send_to_everyone(mocker):
             'stage': 'dev'
         }
     }
-    message.send_to_everyone(event, 'message')
+    message.send_to_everyone(event, 'message', 'userName')
     # asserts
     message.connection_mdl.get_all.assert_called_with()
     message.boto3.client.assert_called_with(
@@ -65,7 +65,7 @@ def test_send_to_everyone(mocker):
         endpoint_url='https://domain/dev'
     )
     MockClient.post_to_connection.assert_called_with(
-        Data='message',
+        Data='{"message": "message", "userName": "userName"}',
         ConnectionId=123
     )
 
@@ -87,7 +87,7 @@ def test_post_message(mocker):
     message.post_message(event)
     # asserts
     message.insert_message.assert_called_with('message', 'userName')
-    message.send_to_everyone.assert_called_with(event, 'message')
+    message.send_to_everyone.assert_called_with(event, 'message', 'userName')
     message.connection_mdl.get.assert_called_with('connectionId')
 
 

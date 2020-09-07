@@ -15,7 +15,11 @@ def test_send_stock(mocker):
     stock.send_stock(event)
     # asserts
     stock.stock_mdl.get.assert_called_with('appl.us')
-    stock.message_ctr.send_to_everyone.assert_called_with(event, expected_message)
+    stock.message_ctr.send_to_everyone.assert_called_with(
+        event=event,
+        message=expected_message,
+        user_name='Bot Stock'
+    )
 
 
 def test_send_stock_not_found(mocker):
@@ -30,4 +34,8 @@ def test_send_stock_not_found(mocker):
     stock.send_stock(event)
     # asserts
     stock.stock_mdl.get.assert_called_with('XYZ')
-    stock.message_ctr.send_to_everyone.assert_called_with(event, expected_message)
+    stock.message_ctr.send_to_everyone.assert_called_with(
+        event=event,
+        message=expected_message,
+        user_name='Bot Stock'
+    )
