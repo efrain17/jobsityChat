@@ -82,7 +82,7 @@ functions:
     layers:
       - { Ref: PythonPackageLayerLambdaLayer }
     environment:
-      table: ${self:custom.dynamodbTableName}
+      USER_POOL_CLIENT_ID: !Ref CognitoUserPoolClient
 
 resources:
   Resources:

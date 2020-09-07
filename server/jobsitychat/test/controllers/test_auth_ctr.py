@@ -3,11 +3,46 @@
 from jobsitychat.controllers import auth
 
 
-def test_authenticate(mocker):
+class MockClient():
+    """Mock for Client"""
+
+    @staticmethod
+    def get_user(**params):
+        """Mock function"""
+        return params
+
+
+def test_authenticate_allow(mocker):
     """Should allow"""
     mocker.patch.object(auth, 'get_policy')
-    auth.authenticate('event')
-    auth.get_policy.assert_called_with('event', 'Allow', 'session')
+    mocker.patch.object(auth.boto3, 'client')
+    mocker.spy(MockClient, 'get_user')
+    auth.boto3.client.return_value = MockClient
+    event = {
+        'queryStringParameters': {
+            'Authorizer': 1234
+        }
+    }
+    auth.authenticate(event)
+    auth.get_policy.assert_called_with(event, 'Allow')
+    MockClient.get_user.assert_called_with(AccessToken=1234)
+
+
+def test_authenticate_deny(mocker):
+    """Should deny"""
+    mocker.patch.object(auth, 'get_policy')
+    mocker.patch.object(auth.boto3, 'client')
+    mocker.patch.object(MockClient, 'get_user')
+    MockClient.get_user.return_value = None
+    auth.boto3.client.return_value = MockClient
+    event = {
+        'queryStringParameters': {
+            'Authorizer': 1234
+        }
+    }
+    auth.authenticate(event)
+    auth.get_policy.assert_called_with(event, 'Deny')
+    MockClient.get_user.assert_called_with(AccessToken=1234)
 
 
 def test_get_policy():
@@ -26,5 +61,5 @@ def test_get_policy():
         }
     }
     event = {'methodArn': 'event'}
-    response = auth.get_policy(event, 'effect', 'session')
+    response = auth.get_policy(event, 'effect')
     assert response == expected_policy

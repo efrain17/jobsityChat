@@ -5,10 +5,16 @@ import boto3
 
 def authenticate(event):
     """Get policy auth"""
-    return get_policy(event, 'Allow', 'session')
+    access_token = event['queryStringParameters']['Authorizer']
+    client = boto3.client('cognito-idp')
+    response = client.get_user(AccessToken=access_token)
+    if response:
+        return get_policy(event, 'Allow')
+    else:
+        return get_policy(event, 'Deny')
 
 
-def get_policy(event, effect, session):
+def get_policy(event, effect):
     """Response allow"""
     return {
         'principalId': 'user',
