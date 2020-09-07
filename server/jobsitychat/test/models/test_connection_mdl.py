@@ -36,6 +36,35 @@ def test_delete_connection(mocker):
     )
 
 
+def test_get_connection(mocker):
+    """Should delete connection"""
+    mocker.spy(connection.hooks.DMTABLE, 'get_item')
+    connection_id = '12345'
+    expected = {
+        'PK': 'connection',
+        'SK': '12345',
+        'TP': 'chatRoom1',
+        'connectionId': '12345',
+        'userName': 'testName',
+    }
+    response = connection.get(connection_id)
+    # asserts
+    connection.hooks.DMTABLE.get_item.assert_called_with(
+        Key={
+            'PK': 'connection',
+            'SK': '12345'
+        },
+        AttributesToGet=[
+            'PK',
+            'SK',
+            'TP',
+            'connectionId',
+            'userName'
+        ]
+    )
+    assert response == expected
+
+
 def test_get_all(mocker):
     """Shoult get all connections"""
     mocker.spy(connection.hooks.DMTABLE, 'query')

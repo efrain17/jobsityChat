@@ -15,6 +15,28 @@ def insert(connection):
     )
 
 
+def get(connection_id):
+    """Delete connection by id"""
+    response = hooks.DMTABLE.get_item(
+        Key={
+            'PK': 'connection',
+            'SK': connection_id
+        },
+        AttributesToGet=[
+            'PK',
+            'SK',
+            'TP',
+            'connectionId',
+            'userName'
+        ]
+    )
+    try:
+        return response['Item']
+    except KeyError:
+        return {}
+
+
+
 def delete(connection_id):
     """Delete connection by id"""
     hooks.DMTABLE.delete_item(
