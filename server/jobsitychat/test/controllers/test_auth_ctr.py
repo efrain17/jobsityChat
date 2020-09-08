@@ -1,5 +1,6 @@
 """This module test auth controller"""
 # pylint: disable=E1101
+import pytest
 from jobsitychat.controllers import auth
 
 
@@ -44,6 +45,25 @@ def test_authenticate_deny(mocker):
     }
     auth.authenticate(event)
     auth.get_policy.assert_called_with(event, 'Deny')
+    MockClient.get_user.assert_called_with(AccessToken=1234)
+
+
+def test_authenticate_exeption(mocker):
+    """Should deny"""
+    exception = Exception('exeption')
+    mocker.patch.object(auth, 'get_policy')
+    mocker.patch.object(auth.boto3, 'client')
+    mocker.patch.object(MockClient, 'get_user', side_effect=exception)
+    MockClient.get_user.return_value = None
+    auth.boto3.client.return_value = MockClient
+    event = {
+        'queryStringParameters': {
+            'Authorizer': 1234
+        }
+    }
+    with pytest.raises(Exception):
+        auth.authenticate(event)
+    auth.get_policy.assert_not_called()
     MockClient.get_user.assert_called_with(AccessToken=1234)
 
 

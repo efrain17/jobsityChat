@@ -26,7 +26,7 @@ pytest jobsitychat/test/
 ```
 Coverage, Current testing coverage 100%
 ```sh
-$ docker-compose stop
+py.test --cov=jobsitychat/controllers/ --cov=jobsitychat/libraries/ --cov=jobsitychat/models/ --cov=jobsitychat/routes/ jobsitychat/test/
 ```
 Linter, Current linter coverage 100%
 ```sh
