@@ -6,10 +6,13 @@ def authenticate(event):
     """Get policy auth"""
     access_token = event['queryStringParameters']['Authorizer']
     client = boto3.client('cognito-idp')
-    response = client.get_user(AccessToken=access_token)
-    if response:
-        return get_policy(event, 'Allow')
-    return get_policy(event, 'Deny')
+    try:
+        client.get_user(AccessToken=access_token)
+    except Exception as exception:
+        if 'NotAuthorizedException' in str(exception)[19:41]:
+            return get_policy(event, 'Deny')
+        raise exception
+    return get_policy(event, 'Allow')
 
 
 def get_policy(event, effect):

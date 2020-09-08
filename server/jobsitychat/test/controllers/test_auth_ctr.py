@@ -31,9 +31,10 @@ def test_authenticate_allow(mocker):
 
 def test_authenticate_deny(mocker):
     """Should deny"""
+    exception = Exception('An error occurred (NotAuthorizedException)')
     mocker.patch.object(auth, 'get_policy')
     mocker.patch.object(auth.boto3, 'client')
-    mocker.patch.object(MockClient, 'get_user')
+    mocker.patch.object(MockClient, 'get_user', side_effect=exception)
     MockClient.get_user.return_value = None
     auth.boto3.client.return_value = MockClient
     event = {
