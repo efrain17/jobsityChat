@@ -7,8 +7,10 @@ custom:
   stage: ${opt:stage, self:provider.stage}
   domain: jobsitychat-#{AWS::AccountId}-${self:custom.stage}
   s3Sync:
-    - bucketName: jobsitychat-951344569535-dev
+    - bucketNameKey: BucketStaticSite
       localDir: ../client
+      acl: public-read
+      deleteRemoved: true
 
 provider:
   name: aws
@@ -161,3 +163,7 @@ resources:
         BucketName: ${self:custom.domain}
         WebsiteConfiguration:
           IndexDocument: index.html
+
+  Outputs:
+    BucketStaticSite:
+      Value: jobsitychat-#{AWS::AccountId}-${self:custom.stage}
