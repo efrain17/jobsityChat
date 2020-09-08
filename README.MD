@@ -33,7 +33,8 @@ Linter, Current linter coverage 100%
 pylint jobsitychat/
 ```
 # Technical information
-* A serverless architecture was chosen for the optimization of resources, costs and ensuring high availability.
+* The code is developed under the functional programming paradigm
+* Serverless architecture was chosen for the optimization of resources, costs and ensuring high availability.
 * You can see all the architecture configuration in the file server/serverless.yml
 * Dynamodb was chosen for the high performance to store the data types of a chat
 * For the authentication control, cognito was used, due to the high security standards
