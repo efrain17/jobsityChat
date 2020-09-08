@@ -74,7 +74,7 @@ serverless deploy --stage dev
 ```
 # Additional configuration
 we do not buy a domain so we need to do few configurations
-* Copy your Websocket endpoint from your console like this wss://hqzzsehbij.execute-api.us-west-2.amazonaws.com/dev
+* Copy your Websocket endpoint from your console like this wss://hqzzsehbij.execute-api.us-west-2.amazonaws.com/dev and replace in the dns section web socket of the frontend
 ##### ![Alt text](docs/endpoint_wss.png)
 * Go to Cognito User Pools https://us-west-2.console.aws.amazon.com/cognito/users/?region=us-west-2#/?_k=qaioty and copy the DNS
 ##### ![Alt text](docs/cognito_dns.png)
