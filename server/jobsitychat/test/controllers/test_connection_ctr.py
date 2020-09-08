@@ -10,7 +10,17 @@ class MockClient():
     def get_user(**params):
         """Mock function"""
         return {
-            'Username': 'userTest'
+            'Username': 'userTest',
+            'UserAttributes': [
+                {
+                    'Name': 'email',
+                    'Value': 'test@mail.com'
+                },
+                {
+                    'Name': 'phone',
+                    'Value': '123'
+                },
+            ],
         }
 
 
@@ -34,7 +44,7 @@ def test_insert_connection(mocker):
         {
             'connectionId': 123,
             'chatRoom': 'chatRoom1',
-            'userName': 'userTest'
+            'userName': 'test@mail.com'
         }
     )
     connection.boto3.client.assert_called_with('cognito-idp')

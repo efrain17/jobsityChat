@@ -8,11 +8,12 @@ def insert_connection(event):
     access_token = event['queryStringParameters']['Authorizer']
     client = boto3.client('cognito-idp')
     user = client.get_user(AccessToken=access_token)
+    user_params = list(filter(lambda atr: atr['Name'] == 'email', user['UserAttributes']))
     connection_id = event['requestContext']['connectionId']
     new_connection = {
         'connectionId': connection_id,
         'chatRoom': 'chatRoom1',
-        'userName': user['Username']
+        'userName': user_params[0]['Value']
     }
     connection_mdl.insert(new_connection)
 
