@@ -6,6 +6,8 @@
     "serverless-s3-sync": "^1.14.4"
   },
   "devDependencies": {
-    "serverless-pseudo-parameters": "^2.5.0"
+    "serverless-pseudo-parameters": "^2.5.0",
+    "serverless-offline": "^6.1.4",
+    "serverless-python-requirements": "^4.3.0"
   }
 }
